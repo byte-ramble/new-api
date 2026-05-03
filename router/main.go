@@ -13,6 +13,10 @@ import (
 )
 
 func SetRouter(router *gin.Engine, assets ThemeAssets) {
+	// Register liveness/readiness probes first so they remain reachable even
+	// if a later route group adds heavyweight middleware. They are unauthenticated
+	// and bypass the standard middleware stack.
+	SetHealthRouter(router)
 	SetApiRouter(router)
 	SetDashboardRouter(router)
 	SetRelayRouter(router)
