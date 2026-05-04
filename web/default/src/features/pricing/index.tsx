@@ -13,6 +13,7 @@ import {
   ModelDetailsDrawer,
   SeoHead,
   GroupShowcase,
+  CacheDiscountExplainer,
 } from './components'
 import { EXCLUDED_GROUPS, VIEW_MODES } from './constants'
 import { useFilters } from './hooks/use-filters'
@@ -191,6 +192,12 @@ export function Pricing() {
               onGroupSelect={setGroupFilter}
             />
           </div>
+
+          {/* Cache discount explainer — surfaces real cache_ratio savings */}
+          <CacheDiscountExplainer
+            models={models}
+            className='mb-6 sm:mb-8'
+          />
 
           <div className='grid gap-4 xl:grid-cols-[330px_minmax(0,1fr)] 2xl:grid-cols-[330px_minmax(0,1fr)]'>
             <PricingSidebar
