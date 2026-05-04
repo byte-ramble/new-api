@@ -27,5 +27,9 @@ OmniRouter 商业化中转站基于 [new-api](https://github.com/QuantumNous/new
 | [onboarding/codex-cli.md](onboarding/codex-cli.md) | Codex CLI 接入 OmniRouter（含包月套餐） | 用户文档 |
 | [onboarding/gemini-cli.md](onboarding/gemini-cli.md) | Gemini CLI 接入 OmniRouter | 用户文档 |
 | [onboarding/cursor.md](onboarding/cursor.md) | Cursor IDE 接入 OmniRouter | 用户文档 |
+| [operations/templates/brand-copy.md](operations/templates/brand-copy.md) | 文案库（Twitter/TG/V2EX/知乎/告警/公告 中英全套）| 运营模板 |
+| [operations/templates/reverse-proxy.md](operations/templates/reverse-proxy.md) | Caddy + nginx + Cloudflare 生产反代配置 | 部署模板 |
+| [operations/templates/legal/](operations/templates/legal/) | 4 篇法律文书草稿（用户协议 / 隐私 / 退款 / 公平使用 + disclaimer）| 法务模板（**律师 review 后用**）|
+| [operations/templates/grafana/](operations/templates/grafana/) | Grafana 看板 JSON + Prometheus 告警规则 | 监控模板 |
 
 > 后续每加一个商业化模块，在这里追加一行索引。

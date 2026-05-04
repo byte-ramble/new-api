@@ -1,0 +1,106 @@
+# Prometheus alerting rules for OmniRouter
+#
+# Drop into Prometheus' rule_files directory (typically /etc/prometheus/rules/)
+# or paste into Grafana → Alerting → Alert rules → Import.
+#
+# Notifications: route via Alertmanager → webhook → Lark/Feishu
+# (see omnirouter-docs/observability/lark-notification.md for the Lark
+# webhook payload format if you wire a custom bridge).
+
+groups:
+  - name: omnirouter-gateway
+    interval: 30s
+    rules:
+      # ----------------------------------------------------------------------
+      # HighErrorRate — 5xx > 1% over 5 minutes
+      # ----------------------------------------------------------------------
+      - alert: OmniRouterHighErrorRate
+        expr: |
+          (
+            sum(rate(omnirouter_http_requests_total{status=~"5.."}[5m]))
+            /
+            sum(rate(omnirouter_http_requests_total[5m]))
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          service: omnirouter
+        annotations:
+          summary: "OmniRouter 5xx error rate above 1% for 5 minutes"
+          description: |
+            5-minute 5xx error rate is {{ $value | humanizePercentage }}.
+            Check upstream channel health and recent deploys.
+            Dashboard: https://grafana.omnirouter.org/d/omnirouter-gateway
+
+      # ----------------------------------------------------------------------
+      # HighLatency — p99 of chat completions > 10s
+      # ----------------------------------------------------------------------
+      - alert: OmniRouterHighLatencyChatCompletions
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le) (
+              rate(omnirouter_http_request_duration_seconds_bucket{route="/v1/chat/completions"}[5m])
+            )
+          ) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: omnirouter
+          route: /v1/chat/completions
+        annotations:
+          summary: "/v1/chat/completions p99 latency exceeds 10s"
+          description: |
+            p99 latency is {{ $value | humanizeDuration }}.
+            Likely upstream slowness or rate-limit retries — investigate channel
+            health and check upstream provider status pages.
+
+      # ----------------------------------------------------------------------
+      # InflightSpike — in-flight > 100 for 2 minutes
+      # ----------------------------------------------------------------------
+      - alert: OmniRouterInflightSpike
+        expr: omnirouter_http_inflight_requests > 100
+        for: 2m
+        labels:
+          severity: warning
+          service: omnirouter
+        annotations:
+          summary: "Concurrent in-flight requests above 100 for 2 minutes"
+          description: |
+            {{ $value }} requests currently in-flight.
+            Usually indicates upstream slowness — requests are accumulating.
+            Check Latency Percentiles panel + Upstream Errors panel.
+
+      # ----------------------------------------------------------------------
+      # ChannelErrorBurst — any channel > 0.5 errors/sec for 3 min
+      # ----------------------------------------------------------------------
+      - alert: OmniRouterChannelErrorBurst
+        expr: |
+          sum by (channel) (rate(omnirouter_relay_upstream_errors_total[3m])) > 0.5
+        for: 3m
+        labels:
+          severity: critical
+          service: omnirouter
+        annotations:
+          summary: "Channel {{ $labels.channel }} burst of upstream errors"
+          description: |
+            Channel {{ $labels.channel }} reporting {{ $value }} errors/sec for 3 minutes.
+            Auto-ban (Phase-2 feature) should kick in soon. If it doesn't,
+            disable the channel manually in admin → Channels.
+
+      # ----------------------------------------------------------------------
+      # ServiceDown — /metrics not reachable (informational; primary signal
+      # is from blackbox exporter or k8s liveness, this is a safety net)
+      # ----------------------------------------------------------------------
+      - alert: OmniRouterScrapeDown
+        expr: up{job="omnirouter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: omnirouter
+        annotations:
+          summary: "Prometheus cannot scrape OmniRouter /metrics"
+          description: |
+            Prometheus has been unable to scrape OmniRouter for 2 minutes.
+            Possible causes: container down, /metrics disabled, networking,
+            scrape allow-list missing this Prometheus instance's IP.
