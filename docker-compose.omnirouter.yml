@@ -1,0 +1,127 @@
+# OmniRouter Production Compose
+#
+# Uses the locally built omnirouter/new-api:phase1-mvp image (contains my
+# /health, /ready, /metrics, Lark notifier additions on top of upstream
+# new-api). Postgres init script auto-applies the OmniRouter brand on first
+# boot — no manual brand seed step needed.
+#
+# Quick start:
+#   docker build -t omnirouter/new-api:phase1-mvp -f Dockerfile .   # build (5-15 min first time)
+#   docker compose -f docker-compose.omnirouter.yml up -d           # run
+#   curl http://localhost:3000/ready                                # verify
+#   open http://localhost:3000                                      # browser
+#
+# Stop / reset:
+#   docker compose -f docker-compose.omnirouter.yml down            # stop
+#   docker compose -f docker-compose.omnirouter.yml down -v         # stop + WIPE all data (incl. brand seed)
+#
+# ⚠️ Production checklist before pointing this at omnirouter.org:
+#   - Change ALL passwords below (pg root pass, redis pass, SESSION_SECRET)
+#   - Set LARK_WEBHOOK_URL to a real Lark/Feishu bot webhook
+#   - Front this with Caddy/nginx for HTTPS termination
+#   - Restrict /metrics access at the reverse-proxy layer (see launch-checklist.md §4.5)
+#   - Configure backups (see launch-checklist.md §5.6)
+
+services:
+  new-api:
+    image: omnirouter/new-api:phase1-mvp
+    container_name: omnirouter
+    restart: unless-stopped
+    command: --log-dir /app/logs
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    environment:
+      # Database
+      - SQL_DSN=postgresql://root:CHANGE_ME_PG@postgres:5432/new-api
+      # Cache
+      - REDIS_CONN_STRING=redis://:CHANGE_ME_REDIS@redis:6379
+      # Timezone
+      - TZ=Asia/Shanghai
+      # ---- OmniRouter additions ----
+      # Lark / 飞书告警通道（必填才生效）
+      - LARK_WEBHOOK_URL=
+      - LARK_WEBHOOK_SECRET=
+      # Prometheus /metrics 端点开关（默认 on，生产用 ingress 限源 IP）
+      - METRICS_ENABLED=true
+      # ---- Multi-node deployment ----
+      # 多副本时必填随机字符串，否则 session 跨副本会失效
+      - SESSION_SECRET=CHANGE_ME_RANDOM_STRING
+      - NODE_NAME=omnirouter-node-1
+      # ---- Performance tuning ----
+      - ERROR_LOG_ENABLED=true
+      - BATCH_UPDATE_ENABLED=true
+      # - STREAMING_TIMEOUT=300              # 流模式无响应超时（秒），出现空补全时调大
+      # - SYNC_FREQUENCY=60                   # 内存缓存与 DB 同步频率（秒）
+      # ---- Analytics (optional) ----
+      # - GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+      # - UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - omnirouter-net
+    healthcheck:
+      # Use the new k8s-style probe rather than /api/status — lighter weight
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/ready | grep -q '\"status\":\"ok\"' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: omnirouter-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "CHANGE_ME_REDIS"]
+    networks:
+      - omnirouter-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "CHANGE_ME_REDIS", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: omnirouter-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: CHANGE_ME_PG
+      POSTGRES_DB: new-api
+    volumes:
+      # Volume named with omnirouter_ prefix to avoid colliding with the
+      # upstream docker-compose.yml (which also declares a volume called
+      # `pg_data` — same compose project name → same volume → password
+      # mismatch when switching stacks). Keep them isolated.
+      - omnirouter_pg_data:/var/lib/postgresql/data
+      #
+      # NOTE: brand-seed.sql is NOT mounted into /docker-entrypoint-initdb.d/.
+      # Postgres init scripts run BEFORE new-api creates the `options` table
+      # (chicken-and-egg), so the seed would fail with "relation 'options'
+      # does not exist". Instead, after first `docker compose up`, run:
+      #
+      #   docker exec -i omnirouter-pg psql -U root -d new-api \
+      #     < omnirouter-docs/operations/brand-seed.sql
+      #   docker restart omnirouter   # reload options from DB
+      #
+      # Only needed once per fresh deployment.
+    networks:
+      - omnirouter-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d new-api"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  omnirouter_pg_data:
+
+networks:
+  omnirouter-net:
+    driver: bridge

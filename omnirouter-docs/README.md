@@ -21,6 +21,7 @@ OmniRouter 商业化中转站基于 [new-api](https://github.com/QuantumNous/new
 | [operations/model-group-catalog.md](operations/model-group-catalog.md) | 28 个模型分组 + 倍率建议（对标 PackyAPI） | 运营配置（不动代码） |
 | [operations/brand-setup.md](operations/brand-setup.md) | OmniRouter 品牌追加配置指南（Rule 5 合规） | 运营配置（不动代码） |
 | [operations/brand-seed.sql](operations/brand-seed.sql) | 品牌信息 SQL 种子（PG/MySQL/SQLite 三库适配） | 运营配置 |
+| [operations/launch-checklist.md](operations/launch-checklist.md) | 商业上线 Checklist（法务/支付/品牌/域名/部署/监控/法律/社群） | 运营 SOP |
 | [onboarding/README.md](onboarding/README.md) | 客户端接入总览 + 端点速查 | 用户文档 |
 | [onboarding/claude-code.md](onboarding/claude-code.md) | Claude Code 接入 OmniRouter | 用户文档 |
 | [onboarding/codex-cli.md](onboarding/codex-cli.md) | Codex CLI 接入 OmniRouter（含包月套餐） | 用户文档 |

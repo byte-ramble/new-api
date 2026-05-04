@@ -1,0 +1,53 @@
+# OmniRouter ship Dockerfile
+#
+# Same multi-stage shape as the upstream Dockerfile, but skips the bun/vite
+# frontend build steps and uses the LOCALLY pre-built web/{default,classic}/dist
+# directories instead. This is ~10x faster and avoids the OOM kill the
+# upstream Dockerfile hits inside small (4GB) Docker VMs while building the
+# heavy classic frontend (mermaid, lottie, semi-ui combine to ~7GB peak).
+#
+# Build prerequisites:
+#   1. cd web/default && bun install && bun run build      (writes web/default/dist)
+#   2. cd web/classic && bun install && bun run build      (writes web/classic/dist)
+#   3. From repo root: docker build -t omnirouter/new-api:phase1-mvp -f Dockerfile.omnirouter .
+#
+# This Dockerfile will FAIL if the dist directories are missing — that's
+# intentional, the dependency must be explicit.
+
+FROM golang:1.26.1-alpine AS builder
+ENV GO111MODULE=on CGO_ENABLED=0
+
+ARG TARGETOS
+ARG TARGETARCH
+ENV GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-amd64}
+ENV GOEXPERIMENT=greenteagc
+
+WORKDIR /build
+
+# Pull modules in a separate layer for caching
+ADD go.mod go.sum ./
+RUN go mod download
+
+# Copy source. .dockerignore (if any) keeps node_modules out, but the
+# pre-built dist directories MUST be present locally — they are the only
+# inputs the //go:embed directives accept.
+COPY . .
+
+# Sanity check: fail loudly if the operator forgot to build the frontend.
+RUN test -f web/default/dist/index.html || (echo "ERROR: web/default/dist/index.html missing — run 'bun run build' in web/default/ first" && exit 1)
+RUN test -f web/classic/dist/index.html || (echo "ERROR: web/classic/dist/index.html missing — run 'bun run build' in web/classic/ first" && exit 1)
+
+RUN go build -ldflags "-s -w -X 'github.com/QuantumNous/new-api/common.Version=$(cat VERSION)'" -o new-api
+
+# Final runtime stage — same as upstream Dockerfile.
+FROM debian:bookworm-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates tzdata libasan8 wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-ca-certificates
+
+COPY --from=builder /build/new-api /
+EXPOSE 3000
+WORKDIR /data
+ENTRYPOINT ["/new-api"]
