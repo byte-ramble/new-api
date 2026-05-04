@@ -105,14 +105,13 @@ paid ──refund/reversal──→ reversed (creates new log row with negative 
 
 ### 触发
 
-任意充值通道成功 → 调 `service.PayCommission(userId, topupRmb, channel)`。已 wire 的 callsite：
-- ✅ `controller/topup.go::EpayCallback` (易支付) — line ~398
+任意充值通道成功 → 调 `service.PayCommission(userId, topupRmb, channel)` 或便利包装 `service.PayCommissionForTopUp(tradeNo, channel)`。已 wire 的 callsite（**全部 5 个充值通道**）：
 
-待 wire（next turn）：
-- ⏳ `controller/topup_creem.go::CreemWebhook`
-- ⏳ `controller/topup_stripe.go::StripeWebhook`
-- ⏳ `controller/topup_waffo.go::WaffoWebhook`
-- ⏳ `controller/topup_waffo_pancake.go::WaffoPancakeWebhook`
+- ✅ `controller/topup.go::EpayCallback` (易支付) — channel="epay"
+- ✅ `controller/topup_creem.go::handleCheckoutCompleted` — channel="creem"
+- ✅ `controller/topup_stripe.go::checkoutCompleted` — channel="stripe"
+- ✅ `controller/topup_waffo.go::handleWaffoPayment` — channel="waffo"
+- ✅ `controller/topup_waffo_pancake.go::WaffoPancakeWebhook` — channel="waffo_pancake"
 
 注：兑换码（`controller/user.go::TopUp`）**不接** commission——兑换码本身可能是邀请奖励，避免循环刷。
 
@@ -224,14 +223,65 @@ go test ./service/ -run "TestRound2|TestPayCommission|TestRequestWithdrawal" -v 
 | [`../../service/affiliate_test.go`](../../service/affiliate_test.go) | 单元测试 |
 | [`../../controller/topup.go`](../../controller/topup.go) | epay callsite (其余 next turn) |
 
+## API 端点
+
+全部已实现 + LIVE，返回 `{success: bool, message?: string, data?: any}`。
+
+### 用户端点 (TokenAuth)
+
+| Method | Path | 用途 |
+|---|---|---|
+| GET | `/api/affiliate/overview` | 仪表盘：余额 + 累计赚到 + 累计提现 + 最近 5 笔 + 待审核数 + 设置 |
+| GET | `/api/affiliate/log?page=1&page_size=20` | 分页 commission 日志 |
+| GET | `/api/affiliate/withdrawals?page=1&page_size=20` | 分页用户自己的提现历史 |
+| POST | `/api/affiliate/withdrawal` | 提交提现申请（body: amount_rmb, method, account, user_note）— 走 CriticalRateLimit |
+
+### Admin 端点 (AdminAuth)
+
+| Method | Path | 用途 |
+|---|---|---|
+| GET | `/api/affiliate/admin/withdrawals?status=pending&page=1` | 提现审核队列；status 可选：pending/approved/rejected/reversed/all |
+| POST | `/api/affiliate/admin/withdrawals/:id/approve` | 通过（body: note）|
+| POST | `/api/affiliate/admin/withdrawals/:id/reject` | 拒绝 + 退款 balance（body: note）|
+
+### 响应示例
+
+`GET /api/affiliate/overview` 当 enabled=true：
+```json
+{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "balance_rmb": 145.30,
+    "total_earned_rmb": 320.50,
+    "total_withdrawn_rmb": 175.20,
+    "last_earned_at": 1714829012,
+    "recent_commissions": [...5 rows newest first...],
+    "pending_withdrawals": 1,
+    "settings": {
+      "level1_rate_pct": 15.0,
+      "level2_rate_pct": 5.0,
+      "min_withdrawal_rmb": 100.0,
+      "withdrawal_fee_rmb": 0.0,
+      "max_daily_commission_rmb": 1000.0
+    }
+  }
+}
+```
+
+当 enabled=false：
+```json
+{ "success": true, "data": { "enabled": false } }
+```
+
 ## 后续迭代
 
 按优先级：
 
-1. **wire 剩余充值通道**（Stripe / Creem / Waffo / Waffo-Pancake）
-2. **API 端点**：用户 `/api/affiliate/{overview,log,withdrawal}` + admin `/api/admin/withdrawal`
-3. **前端页**：用户中心 → 我的推广（含邀请链接生成 + 二维码 + 排行榜可选）
-4. **admin 审核页**：pending 队列 + 一键 approve/reject + 备注
-5. **退款联动**：topup refund → 自动写 commission `reversed` 行 + 反扣 balance
-6. **IP/设备指纹**：注册时收集 + 同指纹邀请关系标 frozen 状态
-7. **多级排行**：邀请数 top 10 / 累计赚 top 10 leaderboard（运营推广用）
+1. **前端页**：用户中心 → 我的推广（含邀请链接生成 + 二维码 + 排行榜可选）
+2. **admin 审核页**：pending 队列 + 一键 approve/reject + 备注
+3. **退款联动**：topup refund → 自动写 commission `reversed` 行 + 反扣 balance
+4. **IP/设备指纹**：注册时收集 + 同指纹邀请关系标 frozen 状态
+5. **多级排行**：邀请数 top 10 / 累计赚 top 10 leaderboard（运营推广用）
+6. **国际化**：commission_log.note + admin_note 走 i18n，支持英文 admin
+7. **批处理**：日终 reconciliation job 校验 SUM(commission_logs) ≡ AffiliateAccount totals

@@ -402,6 +402,8 @@ func handleWaffoPayment(c *gin.Context, wh *core.WebhookHandler, result *core.Pa
 	}
 
 	logger.LogInfo(c.Request.Context(), fmt.Sprintf("Waffo 充值成功 trade_no=%s client_ip=%s", merchantOrderId, c.ClientIP()))
+	// OmniRouter: pay multi-level affiliate commission. No-op when disabled.
+	service.PayCommissionForTopUp(merchantOrderId, "waffo")
 	sendWaffoWebhookResponse(c, wh, true, "")
 }
 

@@ -137,6 +137,24 @@ func SetApiRouter(router *gin.Engine) {
 			}
 		}
 
+		// OmniRouter affiliate commission program (multi-level)
+		// See omnirouter-docs/operations/affiliate-program.md
+		affiliateRoute := apiRouter.Group("/affiliate")
+		affiliateRoute.Use(middleware.UserAuth())
+		{
+			affiliateRoute.GET("/overview", controller.GetAffiliateOverview)
+			affiliateRoute.GET("/log", controller.GetAffiliateCommissionLog)
+			affiliateRoute.GET("/withdrawals", controller.GetAffiliateWithdrawals)
+			affiliateRoute.POST("/withdrawal", middleware.CriticalRateLimit(), controller.PostAffiliateWithdrawal)
+		}
+		affiliateAdminRoute := apiRouter.Group("/affiliate/admin")
+		affiliateAdminRoute.Use(middleware.AdminAuth())
+		{
+			affiliateAdminRoute.GET("/withdrawals", controller.AdminListWithdrawals)
+			affiliateAdminRoute.POST("/withdrawals/:id/approve", controller.AdminApproveWithdrawal)
+			affiliateAdminRoute.POST("/withdrawals/:id/reject", controller.AdminRejectWithdrawal)
+		}
+
 		// Subscription billing (plans, purchase, admin management)
 		subscriptionRoute := apiRouter.Group("/subscription")
 		subscriptionRoute.Use(middleware.UserAuth())

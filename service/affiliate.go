@@ -234,6 +234,30 @@ func RejectWithdrawal(withdrawalId, adminId int, note string) error {
 	})
 }
 
+// PayCommissionForTopUp is a convenience wrapper for gateway webhook
+// handlers (Stripe / Creem / Waffo / etc.) that don't already hold the
+// TopUp object in scope after their Recharge helper.
+//
+// Loads the TopUp by trade_no, then calls PayCommission. Logs and
+// swallows errors — webhook handlers must not abort on commission
+// failure (the topup itself already succeeded).
+//
+// `channel` should be a low-cardinality bucket like "stripe", "creem",
+// "waffo", "waffo_pancake" — appears in commission_log.topup_channel
+// for analytics.
+func PayCommissionForTopUp(tradeNo, channel string) {
+	topUp := model.GetTopUpByTradeNo(tradeNo)
+	if topUp == nil {
+		return
+	}
+	if err := PayCommission(topUp.UserId, topUp.Money, channel); err != nil {
+		common.SysError(fmt.Sprintf(
+			"affiliate commission failed gateway=%s trade_no=%s user_id=%d money=%.2f: %v",
+			channel, tradeNo, topUp.UserId, topUp.Money, err,
+		))
+	}
+}
+
 // round2 rounds to 2 decimal places (cents) using math.Round (round half
 // away from zero). Note that float64 cannot exactly represent every decimal
 // value (1.005 is actually stored as ~1.00499999...), so callers must
