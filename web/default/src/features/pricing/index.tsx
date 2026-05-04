@@ -12,6 +12,7 @@ import {
   ModelCardGrid,
   ModelDetailsDrawer,
   SeoHead,
+  GroupShowcase,
 } from './components'
 import { EXCLUDED_GROUPS, VIEW_MODES } from './constants'
 import { useFilters } from './hooks/use-filters'
@@ -181,6 +182,15 @@ export function Pricing() {
               className='mx-auto mt-4 max-w-2xl sm:mt-6'
             />
           </header>
+
+          {/* Group showcase — quick visual entry to filter the table by group */}
+          <div className='mb-6 sm:mb-8'>
+            <GroupShowcase
+              usableGroup={usableGroup}
+              currentGroup={groupFilter}
+              onGroupSelect={setGroupFilter}
+            />
+          </div>
 
           <div className='grid gap-4 xl:grid-cols-[330px_minmax(0,1fr)] 2xl:grid-cols-[330px_minmax(0,1fr)]'>
             <PricingSidebar
