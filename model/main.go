@@ -280,6 +280,11 @@ func migrateDB() error {
 		&SubscriptionPreConsumeRecord{},
 		&CustomOAuthProvider{},
 		&UserOAuthBinding{},
+		// OmniRouter additions: multi-level affiliate commission system.
+		// Source-of-truth ledger + denormalized account summary + cashout requests.
+		&AffiliateAccount{},
+		&CommissionLog{},
+		&Withdrawal{},
 	)
 	if err != nil {
 		return err
@@ -328,6 +333,10 @@ func migrateDBFast() error {
 		{&SubscriptionPreConsumeRecord{}, "SubscriptionPreConsumeRecord"},
 		{&CustomOAuthProvider{}, "CustomOAuthProvider"},
 		{&UserOAuthBinding{}, "UserOAuthBinding"},
+		// OmniRouter additions: affiliate / commission / withdrawal
+		{&AffiliateAccount{}, "AffiliateAccount"},
+		{&CommissionLog{}, "CommissionLog"},
+		{&Withdrawal{}, "Withdrawal"},
 	}
 	// 动态计算migration数量，确保errChan缓冲区足够大
 	errChan := make(chan error, len(migrations))
