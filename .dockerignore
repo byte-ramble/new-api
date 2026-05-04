@@ -8,3 +8,13 @@ docs
 .eslintcache
 .gocache
 /web/node_modules
+# Newer monorepo layout — exclude both default + classic frontend deps,
+# they're huge (700MB+) and not needed inside the image (we ship the
+# pre-built dist/ directories).
+/web/default/node_modules
+/web/classic/node_modules
+# omnirouter additions: tools we never want in the image
+/omnirouter-docs
+/new-api
+/new-api-linux
+*.log
