@@ -14,6 +14,7 @@ import {
   SeoHead,
   GroupShowcase,
   CacheDiscountExplainer,
+  PricingCalculator,
 } from './components'
 import { EXCLUDED_GROUPS, VIEW_MODES } from './constants'
 import { useFilters } from './hooks/use-filters'
@@ -196,6 +197,13 @@ export function Pricing() {
           {/* Cache discount explainer — surfaces real cache_ratio savings */}
           <CacheDiscountExplainer
             models={models}
+            className='mb-6 sm:mb-8'
+          />
+
+          {/* Interactive cost calculator — collapsed by default */}
+          <PricingCalculator
+            models={models}
+            usableGroup={usableGroup}
             className='mb-6 sm:mb-8'
           />
 
