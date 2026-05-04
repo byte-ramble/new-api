@@ -78,6 +78,10 @@ var (
 		},
 		[]string{"channel", "reason"},
 	)
+	// NOTE: channel auto-disable / recover metrics live in service/channel_metrics.go.
+	// They were originally placed here, but the service package needs to call
+	// them — and middleware imports service (via auth.go) — so colocating
+	// them with the service code avoids the import cycle.
 )
 
 // metricsSkipPaths bypasses metric recording for routes that would only add
@@ -142,3 +146,5 @@ func RecordRelayTokens(channel, model string, promptTokens, completionTokens int
 func RecordRelayUpstreamError(channel, reason string) {
 	relayUpstreamErrorsTotal.WithLabelValues(channel, reason).Inc()
 }
+
+// (channel auto-disable / recover counters: see service/channel_metrics.go)

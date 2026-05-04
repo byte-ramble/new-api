@@ -18,6 +18,7 @@ OmniRouter 商业化中转站基于 [new-api](https://github.com/QuantumNous/new
 | [observability/health-endpoints.md](observability/health-endpoints.md) | k8s 风格存活/就绪探针 | `controller/healthz.go`, `router/health-router.go` |
 | [observability/lark-notification.md](observability/lark-notification.md) | Lark/飞书告警通道 + 系统告警分发器 | `service/lark_notify.go`, `service/system_alert.go` |
 | [observability/prometheus-metrics.md](observability/prometheus-metrics.md) | Prometheus 指标 + /metrics 端点 | `middleware/metrics.go`, `controller/metrics.go` |
+| [observability/channel-auto-ban.md](observability/channel-auto-ban.md) | 渠道自动禁用增强（去抖 + Lark + Prom） | `service/channel_health.go`, `service/channel_metrics.go`, `service/channel.go`（改） |
 | [operations/model-group-catalog.md](operations/model-group-catalog.md) | 28 个模型分组 + 倍率建议（对标 PackyAPI） | 运营配置（不动代码） |
 | [operations/brand-setup.md](operations/brand-setup.md) | OmniRouter 品牌追加配置指南（Rule 5 合规） | 运营配置（不动代码） |
 | [operations/brand-seed.sql](operations/brand-seed.sql) | 品牌信息 SQL 种子（PG/MySQL/SQLite 三库适配） | 运营配置 |

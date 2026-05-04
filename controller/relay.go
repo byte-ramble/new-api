@@ -352,9 +352,25 @@ func processChannelError(c *gin.Context, channelError types.ChannelError, err *t
 	// 不要使用context获取渠道信息，异步处理时可能会出现渠道信息不一致的情况
 	// do not use context to get channel info, there may be inconsistent channel info when processing asynchronously
 	if service.ShouldDisableChannel(err) && channelError.AutoBan {
-		gopool.Go(func() {
-			service.DisableChannel(channelError, err.ErrorWithStatusCode())
-		})
+		// OmniRouter: sliding-window de-bouncer. The legacy path disables on
+		// the first qualifying error; that's an over-eager false-positive
+		// during transient upstream blips. When DisableBurstThreshold > 0
+		// we count classified errors per channel and only fire the disable
+		// once the burst threshold is met within the configured window.
+		// Threshold = 0 preserves legacy behavior verbatim.
+		reasonClass := service.ClassifyChannelError(err)
+		count := service.RecordChannelError(channelError.ChannelId, reasonClass)
+		threshold := operation_setting.GetMonitorSetting().DisableBurstThreshold
+		if threshold > 0 && count < threshold {
+			common.SysLog(fmt.Sprintf(
+				"channel #%d error (%s) recorded; %d/%d in window, not yet disabling",
+				channelError.ChannelId, reasonClass, count, threshold,
+			))
+		} else {
+			gopool.Go(func() {
+				service.DisableChannel(channelError, err.ErrorWithStatusCode(), reasonClass)
+			})
+		}
 	}
 
 	if constant.ErrorLogEnabled && types.IsRecordErrorLog(err) {
