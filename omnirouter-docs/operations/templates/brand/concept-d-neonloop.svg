@@ -1,0 +1,53 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OmniRouter Neon Infinity loop logo">
+  <defs>
+    <linearGradient id="loopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="50%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dark backdrop for neon -->
+  <rect x="0" y="0" width="200" height="200" fill="#0F172A" rx="20"/>
+
+  <!-- Infinity loop drawn as a single continuous path -->
+  <!-- Path traces: start center → up-left arc → down-left arc → back center →
+       up-right arc → down-right arc → back center -->
+  <path d="M 100 100
+           C 82 70, 38 70, 38 100
+           C 38 130, 82 130, 100 100
+           C 118 70, 162 70, 162 100
+           C 162 130, 118 130, 100 100"
+        fill="none" stroke="url(#loopGrad)" stroke-width="14"
+        stroke-linecap="round" filter="url(#neonGlow)"/>
+
+  <!-- Crossing arrows where the loops cross (router intersection) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linecap="round" fill="#0F172A">
+    <!-- vertical break in the cross -->
+    <rect x="92" y="92" width="16" height="16"/>
+  </g>
+  <g stroke="#22D3EE" stroke-width="2" stroke-linecap="round" fill="none">
+    <!-- left arrow → -->
+    <line x1="86" y1="100" x2="98" y2="100"/>
+    <polygon points="98,100 94,96 94,104" fill="#22D3EE"/>
+    <!-- right arrow ← -->
+    <line x1="102" y1="100" x2="114" y2="100"/>
+    <polygon points="102,100 106,96 106,104" fill="#F472B6"/>
+  </g>
+
+  <!-- Glowing nodes at the loop centers (Omni endpoints) -->
+  <circle cx="62" cy="100" r="6" fill="#22D3EE" filter="url(#neonGlow)"/>
+  <circle cx="138" cy="100" r="6" fill="#F472B6" filter="url(#neonGlow)"/>
+
+  <!-- Tiny "OR" label below -->
+  <text x="100" y="180" font-family="'JetBrains Mono', monospace"
+        font-size="14" font-weight="900" fill="url(#loopGrad)"
+        text-anchor="middle" letter-spacing="6">OR</text>
+</svg>

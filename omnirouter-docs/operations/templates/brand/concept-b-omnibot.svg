@@ -1,0 +1,73 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OmniRouter OmniBot mascot logo">
+  <defs>
+    <radialGradient id="bodyGrad" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="60%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#0E7490"/>
+    </radialGradient>
+    <linearGradient id="visorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="50%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Antenna ears with blinking LEDs (cute) -->
+  <g stroke="#22D3EE" stroke-width="4" stroke-linecap="round" fill="none">
+    <line x1="62" y1="42" x2="50" y2="14"/>
+    <line x1="138" y1="42" x2="150" y2="14"/>
+  </g>
+  <circle cx="50" cy="12" r="6" fill="#FBBF24" filter="url(#softGlow)"/>
+  <circle cx="150" cy="12" r="6" fill="#34D399" filter="url(#softGlow)"/>
+
+  <!-- Robot head body — rounded cube -->
+  <rect x="32" y="40" width="136" height="125" rx="34" ry="34"
+        fill="url(#bodyGrad)" stroke="#22D3EE" stroke-width="3"/>
+
+  <!-- Side ports / network LEDs (4 per side, suggesting router ports) -->
+  <g fill="#FBBF24">
+    <circle cx="32" cy="92" r="3"/>
+    <circle cx="32" cy="106" r="3"/>
+    <circle cx="32" cy="120" r="3"/>
+    <circle cx="32" cy="134" r="3"/>
+    <circle cx="168" cy="92" r="3"/>
+    <circle cx="168" cy="106" r="3"/>
+    <circle cx="168" cy="120" r="3"/>
+    <circle cx="168" cy="134" r="3"/>
+  </g>
+
+  <!-- Visor band — wide LED strip across the face -->
+  <rect x="40" y="74" width="120" height="32" rx="6" ry="6"
+        fill="#0F172A" stroke="#22D3EE" stroke-width="2"/>
+  <rect x="40" y="74" width="120" height="32" rx="6" ry="6"
+        fill="url(#visorGrad)" opacity="0.25"/>
+
+  <!-- Two kawaii eyes inside visor -->
+  <circle cx="76" cy="90" r="7" fill="url(#visorGrad)" filter="url(#softGlow)"/>
+  <circle cx="124" cy="90" r="7" fill="url(#visorGrad)" filter="url(#softGlow)"/>
+  <!-- Highlight specks (kawaii sparkle) -->
+  <circle cx="78" cy="87" r="2" fill="#FFFFFF"/>
+  <circle cx="126" cy="87" r="2" fill="#FFFFFF"/>
+
+  <!-- Visor scan line -->
+  <line x1="44" y1="90" x2="156" y2="90"
+        stroke="#EC4899" stroke-width="1" opacity="0.6"/>
+
+  <!-- Mouth: tiny smile -->
+  <path d="M 86 130 Q 100 142 114 130" fill="none"
+        stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Chest badge: "OR" -->
+  <rect x="80" y="148" width="40" height="14" rx="3"
+        fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+  <text x="100" y="159" font-family="'JetBrains Mono', monospace"
+        font-size="11" font-weight="900" fill="#22D3EE"
+        text-anchor="middle" letter-spacing="2">OR</text>
+</svg>

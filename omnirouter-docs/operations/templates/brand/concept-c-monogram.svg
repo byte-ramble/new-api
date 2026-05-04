@@ -1,0 +1,47 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OmniRouter OR monogram logo">
+  <defs>
+    <linearGradient id="orGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background squircle (subtle) -->
+  <rect x="10" y="10" width="180" height="180" rx="40" ry="40"
+        fill="#0F172A"/>
+
+  <!-- O — thick stroked ring with notch on right side suggesting circuit/connector -->
+  <path d="M 65 100
+           A 35 35 0 1 0 65 99.99
+           Z"
+        fill="none" stroke="url(#orGrad)" stroke-width="14"
+        stroke-linecap="round"/>
+  <!-- Notch indicator — small circuit dot interrupting the O -->
+  <rect x="96" y="96" width="8" height="8" fill="#0F172A"/>
+
+  <!-- R — chunky letter, leg ends in arrow (router) -->
+  <g>
+    <!-- vertical stem -->
+    <rect x="115" y="65" width="14" height="70" fill="url(#orGrad)" rx="2"/>
+    <!-- top bow of R -->
+    <path d="M 122 65
+             L 152 65
+             A 22 22 0 0 1 152 109
+             L 132 109"
+          fill="none" stroke="url(#orGrad)" stroke-width="14"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- diagonal leg as arrow shaft -->
+    <line x1="129" y1="100" x2="170" y2="138"
+          stroke="url(#orGrad)" stroke-width="14"
+          stroke-linecap="round"/>
+    <!-- arrowhead at leg tip -->
+    <polygon points="170,138 158,135 165,124"
+             fill="#EC4899"/>
+    <polygon points="170,138 175,118 184,135"
+             fill="#EC4899"/>
+  </g>
+
+  <!-- Tiny circuit dots connecting O and R -->
+  <circle cx="100" cy="100" r="3" fill="#22D3EE"/>
+  <circle cx="115" cy="100" r="3" fill="#22D3EE"/>
+</svg>
