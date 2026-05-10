@@ -54,6 +54,10 @@ func normalizeChannelTestEndpoint(channel *model.Channel, modelName, endpointTyp
 	if channel != nil && channel.Type == constant.ChannelTypeCodex {
 		return string(constant.EndpointTypeOpenAIResponse)
 	}
+	// Claude Code 订阅渠道默认用 Anthropic Messages 端点测试（与原生协议一致）。
+	if channel != nil && channel.Type == constant.ChannelTypeClaudeCode {
+		return string(constant.EndpointTypeAnthropic)
+	}
 	return normalized
 }
 

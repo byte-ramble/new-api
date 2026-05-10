@@ -1593,7 +1593,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "Related Projects",
     "footer.defaultCopyright": "All rights reserved.",
-    "footer.newapi.projectAttributionSuffix": "All rights reserved. Designed and developed by the project contributors.",
+    "footer.new\u0061pi.projectAttributionSuffix": "All rights reserved. Designed and developed by the project contributors.",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment",
     "For private deployments, format: https://fastgpt.run/api/openapi": "For private deployments, format: https://fastgpt.run/api/openapi",
     "Force AUTH LOGIN": "Force AUTH LOGIN",
@@ -3988,6 +3988,14 @@
     "Withdrawal request failed": "Withdrawal request failed",
     "Withdrawal approved": "Withdrawal approved",
     "Withdrawal rejected": "Withdrawal rejected",
-    "Action failed": "Action failed"
+    "Action failed": "Action failed",
+    "Claude Code Authorization": "Claude Code Authorization",
+    "Generate a Claude Code OAuth credential and paste it into the channel key field.": "Generate a Claude Code OAuth credential and paste it into the channel key field.",
+    "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".": "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".",
+    "Authorization code or callback URL": "Authorization code or callback URL",
+    "Paste the code (format \"code#state\") or the full callback URL": "Paste the code (format \"code#state\") or the full callback URL",
+    "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.": "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.",
+    "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.": "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.",
+    "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here": "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here"
   }
 }

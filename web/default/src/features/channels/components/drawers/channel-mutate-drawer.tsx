@@ -94,6 +94,7 @@ import {
   getChannelKey,
   getGroups,
   getPrefillGroups,
+  refreshClaudeCodeCredential,
   refreshCodexCredential,
   updateChannel,
 } from '../../api'
@@ -132,6 +133,7 @@ import {
 } from '../../lib/status-code-risk-guard'
 import type { Channel } from '../../types'
 import { useChannels } from '../channels-provider'
+import { ClaudeCodeOAuthDialog } from '../dialogs/claude-code-oauth-dialog'
 import { CodexOAuthDialog } from '../dialogs/codex-oauth-dialog'
 import { FetchModelsDialog } from '../dialogs/fetch-models-dialog'
 import {
@@ -289,6 +291,12 @@ export function ChannelMutateDrawer({
   const [codexOAuthDialogOpen, setCodexOAuthDialogOpen] = useState(false)
   const [isCodexCredentialRefreshing, setIsCodexCredentialRefreshing] =
     useState(false)
+  const [claudeCodeOAuthDialogOpen, setClaudeCodeOAuthDialogOpen] =
+    useState(false)
+  const [
+    isClaudeCodeCredentialRefreshing,
+    setIsClaudeCodeCredentialRefreshing,
+  ] = useState(false)
   const initialModelsRef = useRef<string[]>([])
   const initialModelMappingRef = useRef<string>('')
   const initialStatusCodeMappingRef = useRef<string>('')
@@ -724,6 +732,25 @@ export function ChannelMutateDrawer({
       toast.error(error instanceof Error ? error.message : t('Refresh failed'))
     } finally {
       setIsCodexCredentialRefreshing(false)
+    }
+  }, [channelId, queryClient, t])
+
+  const handleRefreshClaudeCodeCredential = useCallback(async () => {
+    if (!channelId) return
+    setIsClaudeCodeCredentialRefreshing(true)
+    try {
+      const res = await refreshClaudeCodeCredential(channelId)
+      if (!res.success) {
+        throw new Error(res.message || 'Failed to refresh credential')
+      }
+      toast.success(t('Credential refreshed'))
+      queryClient.invalidateQueries({
+        queryKey: channelsQueryKeys.detail(channelId),
+      })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('Refresh failed'))
+    } finally {
+      setIsClaudeCodeCredentialRefreshing(false)
     }
   }, [channelId, queryClient, t])
 
@@ -2014,6 +2041,67 @@ export function ChannelMutateDrawer({
                 <CodexOAuthDialog
                   open={codexOAuthDialogOpen}
                   onOpenChange={setCodexOAuthDialogOpen}
+                  onKeyGenerated={(key) => {
+                    form.setValue('key', key, { shouldDirty: true })
+                  }}
+                />
+
+                {currentType === 58 && (
+                  <div className='bg-muted/20 space-y-3 rounded-lg border p-4'>
+                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+                      <div className='space-y-0.5'>
+                        <div className='text-sm font-semibold'>
+                          {t('Claude Code Authorization')}
+                        </div>
+                        <div className='text-muted-foreground text-xs'>
+                          {t(
+                            'Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.'
+                          )}
+                        </div>
+                      </div>
+                      <div className='flex flex-wrap items-center gap-2'>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => setClaudeCodeOAuthDialogOpen(true)}
+                        >
+                          <Link2 className='mr-2 h-4 w-4' />
+                          {t('Authorize')}
+                        </Button>
+                        {isEditing && channelId && (
+                          <Button
+                            type='button'
+                            variant='outline'
+                            size='sm'
+                            onClick={handleRefreshClaudeCodeCredential}
+                            disabled={isClaudeCodeCredentialRefreshing}
+                          >
+                            {isClaudeCodeCredentialRefreshing ? (
+                              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                            ) : (
+                              <RefreshCw className='mr-2 h-4 w-4' />
+                            )}
+                            {isClaudeCodeCredentialRefreshing
+                              ? t('Refreshing...')
+                              : t('Refresh credential')}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <Alert>
+                      <AlertDescription>
+                        {t(
+                          'If authorization succeeds, the generated JSON will be inserted into the key field. You still need to save the channel to persist it.'
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                )}
+
+                <ClaudeCodeOAuthDialog
+                  open={claudeCodeOAuthDialogOpen}
+                  onOpenChange={setClaudeCodeOAuthDialogOpen}
                   onKeyGenerated={(key) => {
                     form.setValue('key', key, { shouldDirty: true })
                   }}

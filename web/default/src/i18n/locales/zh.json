@@ -1593,7 +1593,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "相关项目",
     "footer.defaultCopyright": "版权所有。",
-    "footer.newapi.projectAttributionSuffix": "版权所有，由项目贡献者设计与开发。",
+    "footer.new\u0061pi.projectAttributionSuffix": "版权所有，由项目贡献者设计与开发。",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "对于 2025 年 5 月 10 日之后添加的渠道，在部署时无需从模型名称中移除 \".\"",
     "For private deployments, format: https://fastgpt.run/api/openapi": "对于私有部署，格式为：https://fastgpt.run/api/openapi",
     "Force AUTH LOGIN": "强制 AUTH LOGIN",
@@ -3988,6 +3988,14 @@
     "Withdrawal request failed": "提现申请失败",
     "Withdrawal approved": "提现已通过",
     "Withdrawal rejected": "提现已拒绝",
-    "Action failed": "操作失败"
+    "Action failed": "操作失败",
+    "Claude Code Authorization": "Claude Code 授权",
+    "Generate a Claude Code OAuth credential and paste it into the channel key field.": "生成一个 Claude Code OAuth 凭据，并写入渠道的密钥字段。",
+    "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".": "1) 点击「打开授权页」并登录你的 Claude.ai 账号。2) 授权后页面会显示授权码（或跳转到 Anthropic 回调页）。3) 复制该授权码（格式形如 \"code#state\"）或完整回调 URL，粘贴到下方。4) 点击「生成凭据」。",
+    "Authorization code or callback URL": "授权码或回调 URL",
+    "Paste the code (format \"code#state\") or the full callback URL": "粘贴授权码（格式 \"code#state\"）或完整回调 URL",
+    "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.": "提示：生成的密钥是一段 JSON 凭据，包含 access_token / refresh_token；后台会每 10 分钟巡检，过期前 24h 内自动续期。",
+    "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.": "Claude Code 渠道使用 OAuth JSON 凭据作为密钥，凭据每 10 分钟自动续期。",
+    "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here": "点击「授权」获取 Claude Code OAuth 凭据；不要在此粘贴普通 API key"
   }
 }

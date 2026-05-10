@@ -3909,6 +3909,14 @@
     "Your Turnstile site key": "Votre clé de site Turnstile",
     "Zhipu": "Zhipu",
     "Zhipu V4": "Zhipu V4",
+    "Claude Code Authorization": "Autorisation Claude Code",
+    "Generate a Claude Code OAuth credential and paste it into the channel key field.": "Generez un identifiant OAuth Claude Code et collez-le dans le champ de cle du canal.",
+    "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".": "1) Cliquez sur \"Ouvrir la page d'autorisation\" et connectez-vous a votre compte Claude.ai. 2) Apres approbation, la page affichera un code d'autorisation (ou redirigera vers la page de rappel Anthropic). 3) Copiez ce code (format \"code#state\") ou l'URL complete de rappel, puis collez-le ci-dessous. 4) Cliquez sur \"Generer l'identifiant\".",
+    "Authorization code or callback URL": "Code d'autorisation ou URL de rappel",
+    "Paste the code (format \"code#state\") or the full callback URL": "Collez le code (format \"code#state\") ou l'URL complete de rappel",
+    "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.": "Astuce : la cle generee est un identifiant JSON contenant access_token / refresh_token ; elle sera actualisee automatiquement toutes les 10 minutes si elle expire dans les 24 h.",
+    "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.": "Les canaux Claude Code utilisent un identifiant OAuth JSON comme cle. L'identifiant s'actualise automatiquement toutes les 10 minutes.",
+    "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here": "Cliquez sur \"Autoriser\" pour obtenir un identifiant OAuth Claude Code ; ne collez pas ici une simple cle API",
     "Zoom": "Zoom"
   }
 }

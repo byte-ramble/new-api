@@ -3909,6 +3909,14 @@
     "Your Turnstile site key": "Ключ сайта Turnstile",
     "Zhipu": "Zhipu",
     "Zhipu V4": "Zhipu V4",
+    "Claude Code Authorization": "Авторизация Claude Code",
+    "Generate a Claude Code OAuth credential and paste it into the channel key field.": "Создайте учетные данные OAuth Claude Code и вставьте их в поле ключа канала.",
+    "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".": "1) Нажмите \"Открыть страницу авторизации\" и войдите в аккаунт Claude.ai. 2) После подтверждения страница покажет код авторизации (или перенаправит на страницу обратного вызова Anthropic). 3) Скопируйте этот код (в формате \"code#state\") или полный URL обратного вызова и вставьте ниже. 4) Нажмите \"Создать учетные данные\".",
+    "Authorization code or callback URL": "Код авторизации или URL обратного вызова",
+    "Paste the code (format \"code#state\") or the full callback URL": "Вставьте код (формат \"code#state\") или полный URL обратного вызова",
+    "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.": "Совет: созданный ключ - это JSON-учетные данные с access_token / refresh_token; если срок действия истекает в течение 24 ч, они будут автоматически обновляться каждые 10 минут.",
+    "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.": "Каналы Claude Code используют JSON-учетные данные OAuth в качестве ключа. Учетные данные автоматически обновляются каждые 10 минут.",
+    "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here": "Нажмите \"Авторизовать\", чтобы получить учетные данные OAuth Claude Code; не вставляйте здесь обычный API-ключ",
     "Zoom": "Zoom"
   }
 }

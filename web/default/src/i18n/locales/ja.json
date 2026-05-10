@@ -3909,6 +3909,14 @@
     "Your Turnstile site key": "あなたのTurnstileサイトキー",
     "Zhipu": "Zhipu",
     "Zhipu V4": "Zhipu V 4",
+    "Claude Code Authorization": "Claude Code 認可",
+    "Generate a Claude Code OAuth credential and paste it into the channel key field.": "Claude Code の OAuth 認証情報を生成し、チャンネルのキー欄に貼り付けます。",
+    "1) Click \"Open authorization page\" and log in to your Claude.ai account. 2) After approving, the page will display an authorization code (or redirect to the Anthropic callback page). 3) Copy that code (format like \"code#state\") or the full callback URL and paste it below. 4) Click \"Generate credential\".": "1) 「認可ページを開く」をクリックして Claude.ai アカウントにログインします。2) 承認後、ページに認可コードが表示されるか、Anthropic のコールバックページへリダイレクトされます。3) そのコード（「code#state」の形式）または完全なコールバック URL をコピーして下に貼り付けます。4) 「認証情報を生成」をクリックします。",
+    "Authorization code or callback URL": "認可コードまたはコールバック URL",
+    "Paste the code (format \"code#state\") or the full callback URL": "コード（形式: 「code#state」）または完全なコールバック URL を貼り付けてください",
+    "Tip: The generated key is a JSON credential including access_token / refresh_token; it will be auto-refreshed every 10 minutes if expiring within 24h.": "ヒント: 生成されるキーは access_token / refresh_token を含む JSON 認証情報です。24 時間以内に期限切れになる場合、10 分ごとに自動更新されます。",
+    "Claude Code channels use an OAuth JSON credential as the key. The credential auto-refreshes every 10 minutes.": "Claude Code チャンネルは、キーとして OAuth JSON 認証情報を使用します。認証情報は 10 分ごとに自動更新されます。",
+    "Click \"Authorize\" to obtain a Claude Code OAuth credential; do not paste a plain API key here": "「認可」をクリックして Claude Code の OAuth 認証情報を取得してください。ここに通常の API キーを貼り付けないでください",
     "Zoom": "ズーム"
   }
 }

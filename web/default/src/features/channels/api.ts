@@ -280,6 +280,45 @@ export async function getCodexUsage(
 }
 
 // ============================================================================
+// Claude Code Channel Operations
+// ============================================================================
+
+// 复用 Codex 同构的 response 类型；语义一致，只是端点不同。
+export type ClaudeCodeOAuthStartResponse = CodexOAuthStartResponse
+export type ClaudeCodeOAuthCompleteResponse = CodexOAuthCompleteResponse
+export type ClaudeCodeCredentialRefreshResponse = CodexCredentialRefreshResponse
+
+export async function startClaudeCodeOAuth(): Promise<ClaudeCodeOAuthStartResponse> {
+  const config: ExtendedApiConfig = { skipBusinessError: true }
+  const res = await api.post('/api/channel/claude_code/oauth/start', {}, config)
+  return res.data
+}
+
+export async function completeClaudeCodeOAuth(
+  input: string
+): Promise<ClaudeCodeOAuthCompleteResponse> {
+  const config: ExtendedApiConfig = { skipBusinessError: true }
+  const res = await api.post(
+    '/api/channel/claude_code/oauth/complete',
+    { input },
+    config
+  )
+  return res.data
+}
+
+export async function refreshClaudeCodeCredential(
+  channelId: number
+): Promise<ClaudeCodeCredentialRefreshResponse> {
+  const config: ExtendedApiConfig = { skipBusinessError: true }
+  const res = await api.post(
+    `/api/channel/${channelId}/claude_code/refresh`,
+    {},
+    config
+  )
+  return res.data
+}
+
+// ============================================================================
 // Multi-Key Management
 // ============================================================================
 
